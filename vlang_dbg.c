@@ -39,5 +39,10 @@ int main(int argc, char *argv[]) {
         parseVLang(line);
     }
 
+    // Close the input file
+    fclose(oldFile);
+
+    printf("\nParsing successful\n");
+
     return 0;
 }
