@@ -15,6 +15,10 @@ void parseVLang(const char *line) {
 
     // function regex
     char *pattern_function = "^function ([a-zA-Z]+) (int|string|bool) ([a-zA-Z]+):"; // validated, works, group1 is function name, group2 is input data type, group3 is name of input
+
+    //function end regex
+    char *pattern_end_function = "end ([a-zA-Z]+)"; //validated, works, group1 is function name to end
+
 }
 
 int main(int argc, char *argv[]) {
