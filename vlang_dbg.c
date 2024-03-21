@@ -25,6 +25,9 @@ void parseVLang(const char *line) {
     //elseif statement regex
     char *pattern_else_if = "\\s*elseif\\s+([^:]+):\\s*"; //validated, group 1 is elseif check statement
 
+    //else statement regex
+    char *pattern_else = "(else:)"; // validated, to be reviewed
+
 }
 
 int main(int argc, char *argv[]) {
