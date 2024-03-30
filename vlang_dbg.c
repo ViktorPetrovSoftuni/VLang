@@ -80,7 +80,18 @@ void parseVLang(const char *line) {
 
         return;
     }
-
+    
+    // Match functions
+    reti = regcomp(&regex, pattern_function, REG_EXTENDED);
+    if (reti) {
+        fprintf(stderr, "Could not compile function regex\n");
+        return;
+    }
+    reti = regexec(&regex, line, 3, matches, 0);
+    if (!reti) {
+        printf("Match found for function declaration:\n%s\n", line);
+        return;
+    }
 }
 
 int main(int argc, char *argv[]) {
