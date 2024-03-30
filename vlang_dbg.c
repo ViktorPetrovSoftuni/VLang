@@ -16,17 +16,18 @@ void parseVLang(const char *line) {
   // variable assignment regex
   char *pattern_print =
       "print (.+)"; // validated, works, group1 is item to be printed
+
   char *pattern_assignment =
       "(int|string|bool) ([a-zA-Z]+)(\\s= )(.+)"; // validated, works, group1 is
-  // type, group 2 is name,
-  // group 4 is value
+                                                  // type, group 2 is name,
+                                                  // group 4 is value
 
   // function regex
-  char *pattern_function =
-      "\\bfunction ([a-zA-Z]+) (int|string|bool) "
-      "([a-zA-Z]+):"; // Updated with \b word boundary anchor, group1 is
-  // function name, group2 is input
-  // data type, group3 is name of input
+  char *pattern_function = "\\bfunction ([a-zA-Z]+) (int|string|bool) "
+                           "([a-zA-Z]+):"; // Updated with \b word boundary
+                                           // anchor, group1 is function name,
+                                           // group2 is input data type, group3
+                                           // is name of input
 
   // function end regex
   char *pattern_end_function =
@@ -43,7 +44,7 @@ void parseVLang(const char *line) {
                                     // statement
 
   // else statement regex
-  char *pattern_else = "(else:)"; // validated, to be reviewed
+  char *pattern_else = "(else):"; // validated
 
   // while statement regex
   char *pattern_while = "while (.+):";
@@ -191,6 +192,18 @@ void parseVLang(const char *line) {
       match[end - start] = '\0';
       printf("If statement check: %s\n", match);
     }
+    return;
+  }
+  
+  // Match else statement
+  reti = regcomp(&regex, pattern_else, REG_EXTENDED);
+  if (reti) {
+    fprintf(stderr, "Could not compile else statement regex\n");
+    return;
+  }
+  reti = regexec(&regex, line, 0, NULL, 0);
+  if (!reti) {
+    printf("Match found for else:\n%s\n", line);
     return;
   }
 
