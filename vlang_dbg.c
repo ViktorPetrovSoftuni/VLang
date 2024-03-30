@@ -17,7 +17,7 @@ void parseVLang(const char *line) {
     char *pattern_function = "^function ([a-zA-Z]+) (int|string|bool) ([a-zA-Z]+):"; // validated, works, group1 is function name, group2 is input data type, group3 is name of input
 
     //function end regex
-    char *pattern_end_function = "end ([a-zA-Z]+)"; //validated, works, group1 is function name to end
+    char *pattern_end_function = "end (\\w+)"; //validated, works, group1 is function name to end
 
     //if statement regex
     char *pattern_if = "\\s*if\\s+([^:]+):\\s*"; // validated, works, group1 is if check statement
@@ -50,7 +50,7 @@ void parseVLang(const char *line) {
         size_t start = matches[1].rm_so;
         size_t end = matches[1].rm_eo; 
         if (start != -1 && end != -1) {
-            char match[256]; // Assuming a maximum length of 255 characters
+            char match[512]; // Assuming a maximum lenght of  511 characters
             strncpy(match, line + start, end - start);
             match[end - start] = '\0';
             printf("Value to be printed: %s\n", match);
@@ -72,7 +72,7 @@ void parseVLang(const char *line) {
         size_t start = matches[4].rm_so;
         size_t end = matches[4].rm_eo;
         if (start != -1 && end != -1) {
-            char match[256]; // Assuming a maximum length of 255 characters
+            char match[512]; // Assuming a maximum lenght of  511 characters
             strncpy(match, line + start, end - start);
             match[end - start] = '\0';
             printf("Variable value: %s\n", match);
@@ -94,7 +94,7 @@ void parseVLang(const char *line) {
         size_t start = matches[1].rm_so;
         size_t end = matches[1].rm_eo;
         if (start != -1 && end != -1) {
-            char match[256]; // Assuming a maximum length of 255 characters
+            char match[512]; // Assuming a maximum lenght of  511 characters
             strncpy(match, line + start, end - start);
             match[end - start] = '\0';
             printf("Function name: %s\n", match);
@@ -103,7 +103,7 @@ void parseVLang(const char *line) {
         start = matches[2].rm_so; // Removed duplicate declaration of start
         end = matches[2].rm_eo; // Removed duplicate declaration of end
         if (start != -1 && end != -1) {
-            char match[256]; // Assuming a maximum length of 255 characters
+            char match[512]; // Assuming a maximum lenght of  511 characters
             strncpy(match, line + start, end - start);
             match[end - start] = '\0';
             printf("Function input data type: %s\n", match);
@@ -112,7 +112,7 @@ void parseVLang(const char *line) {
         start = matches[3].rm_so; // Use group 3 for the variable name
         end = matches[3].rm_eo;
         if (start != -1 && end != -1) {
-            char match[256]; // Assuming a maximum length of 255 characters
+            char match[512]; // Assuming a maximum lenght of  511 characters
             strncpy(match, line + start, end - start);
             match[end - start] = '\0';
             printf("Function input variable name: %s\n", match);
@@ -126,11 +126,21 @@ void parseVLang(const char *line) {
         fprintf(stderr, "Could not compile end function regex\n");
         return;
     }
-    reti = regexec(&regex, line, 0, NULL, 0);
+    reti = regexec(&regex, line, 1, matches, 0);
     if (!reti) {
         printf("Match found for function end:\n%s\n", line);
+        // Extract and print the matched value
+        size_t start = matches[1].rm_so;
+        size_t end = matches[1].rm_eo; 
+        if (start != -1 && end != -1) {
+            char match[512]; // Assuming a maximum lenght of  511 characters
+            strncpy(match, line + start, end - start);
+            match[end - start] = '\0';
+            printf("Name of function to be ended: %s\n", match);
+        }
         return;
     }
+
     
 }
 
