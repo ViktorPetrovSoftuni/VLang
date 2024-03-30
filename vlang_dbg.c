@@ -57,6 +57,19 @@ void parseVLang(const char *line) {
         }
         return;
     }
+    
+    // Match variable assignments
+    reti = regcomp(&regex, pattern_assignment, REG_EXTENDED);
+    if (reti) {
+        fprintf(stderr, "Could not compile variable assignment regex\n");
+        return;
+    }
+
+    reti = regexec(&regex, line, 5, matches, 0);
+    if (!reti) {
+        printf("Match found for variable assignment:\n%s", line);
+        return;
+    }
 
 }
 
