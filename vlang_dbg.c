@@ -24,12 +24,12 @@ void parseVLang(const char *line) {
   char *pattern_print =
       "print (.+)"; // validated, works, group1 is item to be printed
 
-  char *pattern_assignment =
+  char *pattern_variable_assigned =
       "(int|string|bool) ([a-zA-Z]+)(\\s= )(.+)"; // validated, works, group1 is
                                                   // type, group 2 is name,
                                                   // group 4 is value
 
-  
+  char *pattern_variable_unassigned = "(int|string|bool) ([a-zA-Z]+)";
   // function regex
   char *pattern_function = "\\bfunction ([a-zA-Z]+) (int|string|bool) "
                            "([a-zA-Z]+):"; // Updated with \b word boundary ,
@@ -89,7 +89,7 @@ void parseVLang(const char *line) {
   }
 
   // Match variable assignments
-  reti = regcomp(&regex, pattern_assignment, REG_EXTENDED);
+  reti = regcomp(&regex, pattern_variable_assigned, REG_EXTENDED);
   if (reti) {
     fprintf(stderr, "Could not compile variable assignment regex\n");
     return;
