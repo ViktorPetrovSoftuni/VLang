@@ -18,6 +18,13 @@ void parseVLang(const char *line) {
 }
 
 int main(int argc, char *argv[]) {
+    FILE *oldFile;
+
+    // Check if correct number of command line arguments are provided
+    if (argc != 2) {
+        fprintf(stderr, "Usage: %s inputFile\n", argv[0]);
+        return 1;
+    }
 
     return 0;
 }
