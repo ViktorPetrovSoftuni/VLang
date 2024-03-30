@@ -25,7 +25,11 @@ void parseVLang(const char *line) {
                                                   // group 4 is value
 
   // function regex
-  char *pattern_function = "\\bfunction ([a-zA-Z]+) (int|string|bool) ([a-zA-Z]+):"; // Updated with \b word boundary , group1 is function name, group2 is input data type, group3 is name of input
+  char *pattern_function = "\\bfunction ([a-zA-Z]+) (int|string|bool) "
+                           "([a-zA-Z]+):"; // Updated with \b word boundary ,
+                                           // group1 is function name, group2 is
+                                           // input data type, group3 is name of
+                                           // input
 
   // function end regex
   char *pattern_end_function =
@@ -33,17 +37,19 @@ void parseVLang(const char *line) {
                        // function name to end
 
   // if statement regex
-  char *pattern_if = "\\s*if\\s+([^:]+):\\s*"; // validated, works, group1 is if check statement
+  char *pattern_if = "\\s*if\\s+([^:]+):\\s*"; // validated, works, group1 is if
+                                               // check statement
 
   // elseif statement regex
   char *pattern_else_if =
-      "\\s*elseif\\s+([^:]+):\\s*"; // validated, group 1 is elseif check statement
+      "\\s*elseif\\s+([^:]+):\\s*"; // validated, group 1 is elseif check
+                                    // statement
 
   // else statement regex
   char *pattern_else = "(else):"; // validated
 
   // while statement regex
-  char *pattern_while = "while (.+):"; //validated, group1 is while statement
+  char *pattern_while = "while (.+):"; // validated, group1 is while statement
 
   // return statement regex
   char *pattern_return =
@@ -197,7 +203,7 @@ void parseVLang(const char *line) {
     fprintf(stderr, "Could not compile else statement regex\n");
     return;
   }
-  reti = regexec(&regex, line, 0, NULL, 0);
+  reti = regexec(&regex, line, 0, matches, 0);
   if (!reti) {
     printf("Match found for else:\n%s\n", line);
     return;
@@ -221,6 +227,18 @@ void parseVLang(const char *line) {
       match[end - start] = '\0';
       printf("While statement check: %s\n", match);
     }
+    return;
+  }
+  
+  // Match return statement
+  reti = regcomp(&regex, pattern_return, REG_EXTENDED);
+  if (reti) {
+    fprintf(stderr, "Could not compile return statement regex\n");
+    return;
+  }
+  reti = regexec(&regex, line, 0, NULL, 0);
+  if (!reti) {
+    printf("Match found for return statement:\n%s\n", line);
     return;
   }
 
