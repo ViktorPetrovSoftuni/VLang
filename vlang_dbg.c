@@ -179,9 +179,18 @@ void parseVLang(const char *line) {
     fprintf(stderr, "Could not compile if statement regex\n");
     return;
   }
-  reti = regexec(&regex, line, 0, NULL, 0);
+  reti = regexec(&regex, line, 2, matches, REG_EXTENDED);
   if (!reti) {
     printf("Match found for if statement:\n%s\n", line);
+    // Extract and print the matched value
+    size_t start = matches[1].rm_so;
+    size_t end = matches[1].rm_eo;
+    if (start != -1 && end != -1) {
+      char match[512]; // Assuming a maximum lenght of  511 characters
+      strncpy(match, line + start, end - start);
+      match[end - start] = '\0';
+      printf("If statement check: %s\n", match);
+    }
     return;
   }
 
