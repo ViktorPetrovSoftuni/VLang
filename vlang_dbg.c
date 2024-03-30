@@ -34,6 +34,22 @@ void parseVLang(const char *line) {
     //return statement regex
     char *pattern_return = "return (.+)"; // validated, works, group1 is return value
 
+        // Compile regex pattern
+    regmatch_t matches[5]; // Array to store matches
+    reti = regcomp(&regex, pattern_print, REG_EXTENDED);
+    if (reti) {
+        fprintf(stderr, "Could not compile print statement regex\n");
+        regfree(&regex);
+        return;
+    }
+
+    reti = regexec(&regex, line, 2, matches, 0);
+    if (!reti) {
+        printf("Match found for print statement:\n%s", line);
+        return;
+    }
+
+
 }
 
 int main(int argc, char *argv[]) {
