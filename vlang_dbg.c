@@ -1,54 +1,70 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <regex.h>
-#include <string.h>
 #include <ctype.h>
 
-void parseVLang(const char *line) {
+#include <regex.h>
+
+#include <stdio.h>
+
+#include <stdlib.h>
+
+#include <string.h>
+
+void parseVLang(const char * line) {
     regex_t regex;
     int reti;
 
     // Define regex patterns
     // variable assignment regex
-    char *pattern_print = "print (.+)"; // validated, works, group1 is item to be printed
-    char *pattern_assignment = "(int|string|bool) ([a-zA-Z]+)(\\s= )(.+)"; // validated, works, group1 is type, group 2 is name, group 4 is value
+    char * pattern_print =
+        "print (.+)"; // validated, works, group1 is item to be printed
+    char * pattern_assignment =
+        "(int|string|bool) ([a-zA-Z]+)(\\s= )(.+)"; // validated, works, group1 is
+    // type, group 2 is name,
+    // group 4 is value
 
     // function regex
-    char *pattern_function = "function ([a-zA-Z]+) (int|string|bool) ([a-zA-Z]+):"; // validated, works, group1 is function name, group2 is input data type, group3 is name of input
+    char * pattern_function = "function ([a-zA-Z]+) (int|string|bool) "
+    "([a-zA-Z]+):"; // validated, works, group1 is
+    // function name, group2 is input
+    // data type, group3 is name of input
 
-    //function end regex
-    char *pattern_end_function = "end (\\w+)"; //validated, works, group1 is function name to end
+    // function end regex
+    char * pattern_end_function =
+        "end (\\w+)"; // validated, works, group1 is function name to end
 
-    //if statement regex
-    char *pattern_if = "\\s*if\\s+([^:]+):\\s*"; // validated, works, group1 is if check statement
+    // if statement regex
+    char * pattern_if = "\\s*if\\s+([^:]+):\\s*"; // validated, works, group1 is if
+    // check statement
 
-    //elseif statement regex
-    char *pattern_else_if = "\\s*elseif\\s+([^:]+):\\s*"; //validated, group 1 is elseif check statement
+    // elseif statement regex
+    char * pattern_else_if =
+        "\\s*elseif\\s+([^:]+):\\s*"; // validated, group 1 is elseif check
+    // statement
 
-    //else statement regex
-    char *pattern_else = "(else:)"; // validated, to be reviewed
+    // else statement regex
+    char * pattern_else = "(else:)"; // validated, to be reviewed
 
-    //while statement regex
-    char *pattern_while = "while (.+):";
+    // while statement regex
+    char * pattern_while = "while (.+):";
 
-    //return statement regex
-    char *pattern_return = "return (.+)"; // validated, works, group1 is return value
+    // return statement regex
+    char * pattern_return =
+        "return (.+)"; // validated, works, group1 is return value
 
-        // Compile regex pattern
+    // Compile regex pattern
     regmatch_t matches[5]; // Array to store matches
-    reti = regcomp(&regex, pattern_print, REG_EXTENDED);
+    reti = regcomp( & regex, pattern_print, REG_EXTENDED);
     if (reti) {
         fprintf(stderr, "Could not compile print statement regex\n");
-        regfree(&regex);
+        regfree( & regex);
         return;
     }
 
-    reti = regexec(&regex, line, 2, matches, 0);
+    reti = regexec( & regex, line, 2, matches, 0);
     if (!reti) {
         printf("Match found for print statement:\n%s", line);
         // Extract and print the matched value
         size_t start = matches[1].rm_so;
-        size_t end = matches[1].rm_eo; 
+        size_t end = matches[1].rm_eo;
         if (start != -1 && end != -1) {
             char match[512]; // Assuming a maximum lenght of  511 characters
             strncpy(match, line + start, end - start);
@@ -57,15 +73,15 @@ void parseVLang(const char *line) {
         }
         return;
     }
-    
+
     // Match variable assignments
-    reti = regcomp(&regex, pattern_assignment, REG_EXTENDED);
+    reti = regcomp( & regex, pattern_assignment, REG_EXTENDED);
     if (reti) {
         fprintf(stderr, "Could not compile variable assignment regex\n");
         return;
     }
 
-    reti = regexec(&regex, line, 5, matches, 0);
+    reti = regexec( & regex, line, 5, matches, 0);
     if (!reti) {
         printf("Match found for variable assignment:\n%s", line);
         // Extract and print the matched value
@@ -80,14 +96,16 @@ void parseVLang(const char *line) {
 
         return;
     }
-    
+
     // Match functions
-    reti = regcomp(&regex, pattern_function, REG_EXTENDED);
+    reti = regcomp( & regex, pattern_function, REG_EXTENDED);
     if (reti) {
         fprintf(stderr, "Could not compile function regex\n");
         return;
     }
-    reti = regexec(&regex, line, 4, matches, 0); // Increased to 4 to capture the entire match and three groups
+    reti =
+        regexec( & regex, line, 4, matches,
+            0); // Increased to 4 to capture the entire match and three groups
     if (!reti) {
         printf("Match found for function declaration:\n%s\n", line);
         // Extract and print the function name
@@ -119,19 +137,19 @@ void parseVLang(const char *line) {
         }
         return;
     }
-    
+
     // Match function block ends
-    reti = regcomp(&regex, pattern_end_function, REG_EXTENDED);
+    reti = regcomp( & regex, pattern_end_function, REG_EXTENDED);
     if (reti) {
         fprintf(stderr, "Could not compile end function regex\n");
         return;
     }
-    reti = regexec(&regex, line, 2, matches, 0);
+    reti = regexec( & regex, line, 2, matches, 0);
     if (!reti) {
         printf("Match found for function end:\n%s\n", line);
         // Extract and print the matched value
         size_t start = matches[1].rm_so;
-        size_t end = matches[1].rm_eo; 
+        size_t end = matches[1].rm_eo;
         if (start != -1 && end != -1) {
             char match[512]; // Assuming a maximum lenght of  511 characters
             strncpy(match, line + start, end - start);
@@ -141,11 +159,24 @@ void parseVLang(const char *line) {
         return;
     }
 
-    
+    // Check for code that was not detected by the regex parser
+    if (strcmp(line, "") != 0) {
+        int hasAlphanumeric = 0; // Assume initially no alphanumeric characters
+        for (int i = 0; line[i] != '\0'; i++) {
+            if (isalnum(line[i])) {
+                hasAlphanumeric = 1; // Found an alphanumeric character
+                break; // No need to continue checking
+            }
+        }
+        if (hasAlphanumeric >= 1) {
+            printf("No code found on line\n%s\n", line);
+        }
+    }
+    regfree( & regex);
 }
 
-int main(int argc, char *argv[]) {
-    FILE *oldFile;
+int main(int argc, char * argv[]) {
+    FILE * oldFile;
 
     // Check if correct number of command line arguments are provided
     if (argc != 2) {
