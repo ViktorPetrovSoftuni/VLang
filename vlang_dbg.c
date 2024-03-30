@@ -120,6 +120,19 @@ void parseVLang(const char *line) {
         return;
     }
     
+    // Match function block ends
+    reti = regcomp(&regex, pattern_end_function, REG_EXTENDED);
+    if (reti) {
+        fprintf(stderr, "Could not compile end function regex\n");
+        return;
+    }
+    reti = regexec(&regex, line, 0, NULL, 0);
+    if (!reti) {
+        printf("Match found for function end:\n%s\n", line);
+        return;
+    }
+
+    
 }
 
 int main(int argc, char *argv[]) {
