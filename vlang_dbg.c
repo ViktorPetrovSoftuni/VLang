@@ -46,6 +46,15 @@ void parseVLang(const char *line) {
     reti = regexec(&regex, line, 2, matches, 0);
     if (!reti) {
         printf("Match found for print statement:\n%s", line);
+        // Extract and print the matched value
+        size_t start = matches[1].rm_so;
+        size_t end = matches[1].rm_eo; 
+        if (start != -1 && end != -1) {
+            char match[256]; // Assuming a maximum length of 255 characters
+            strncpy(match, line + start, end - start);
+            match[end - start] = '\0';
+            printf("Value to be printed: %s\n", match);
+        }
         return;
     }
 
