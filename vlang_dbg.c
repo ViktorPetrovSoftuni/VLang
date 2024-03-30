@@ -28,6 +28,9 @@ void parseVLang(const char *line) {
     //else statement regex
     char *pattern_else = "(else:)"; // validated, to be reviewed
 
+    //while statement regex
+    char *pattern_while = "while (.+):";
+
 }
 
 int main(int argc, char *argv[]) {
