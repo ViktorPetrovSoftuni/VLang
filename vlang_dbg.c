@@ -11,10 +11,10 @@ void parseVLang(const char *line) {
     // Define regex patterns
     // variable assignment regex
     char *pattern_print = "print (.+)"; // validated, works, group1 is item to be printed
-    char *pattern_assignment = "^(int|string|bool) ([a-zA-Z]+)(\\s= )(.+)"; // validated, works, group1 is type, group 2 is name, group 4 is value
+    char *pattern_assignment = "(int|string|bool) ([a-zA-Z]+)(\\s= )(.+)"; // validated, works, group1 is type, group 2 is name, group 4 is value
 
     // function regex
-    char *pattern_function = "^function ([a-zA-Z]+) (int|string|bool) ([a-zA-Z]+):"; // validated, works, group1 is function name, group2 is input data type, group3 is name of input
+    char *pattern_function = "function ([a-zA-Z]+) (int|string|bool) ([a-zA-Z]+):"; // validated, works, group1 is function name, group2 is input data type, group3 is name of input
 
     //function end regex
     char *pattern_end_function = "end (\\w+)"; //validated, works, group1 is function name to end
