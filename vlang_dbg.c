@@ -22,6 +22,9 @@ void parseVLang(const char *line) {
     //if statement regex
     char *pattern_if = "\\s*if\\s+([^:]+):\\s*"; // validated, works, group1 is if check statement
 
+    //elseif statement regex
+    char *pattern_else_if = "\\s*elseif\\s+([^:]+):\\s*"; //validated, group 1 is elseif check statement
+
 }
 
 int main(int argc, char *argv[]) {
