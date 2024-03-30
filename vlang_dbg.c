@@ -299,7 +299,7 @@ int main(int argc, char *argv[]) {
   fclose(oldFile);
   if (errorCounter == 1) {
     printf("\nYour code has an error! Fix it!\n");
-    printf("Error is on line %d\n", lineCounter);
+    printf("Error is on line %d\n", errorLines[0]);
   } else if (errorCounter > 1) {
     printf("\nYou have %d errors! Fix them!\n", errorCounter);
     for (int i = 0; i < 512; i++) {
