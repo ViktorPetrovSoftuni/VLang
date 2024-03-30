@@ -9,10 +9,14 @@
 #include <string.h>
 
 int errorCounter = 0;
+int lineCounter = 0;
+int errorLines[512] = {0}; // Initialise error lines array and fill it with zeroes
 
 void parseVLang(const char *line) {
   regex_t regex;
   int reti;
+
+  lineCounter++; // Incriment line counter to give more accurate error readings
 
   // Define regex patterns
   // variable assignment regex
@@ -263,6 +267,7 @@ void parseVLang(const char *line) {
     if (hasAlphanumeric >= 1) {
       printf("No code found on line\n%s\n", line);
       errorCounter++; // Add an error to the error counter
+      errorLines[lineCounter-1] = lineCounter;
     }
   }
   regfree(&regex);
@@ -294,8 +299,15 @@ int main(int argc, char *argv[]) {
   fclose(oldFile);
   if (errorCounter == 1) {
     printf("\nYour code has an error! Fix it!\n");
+    printf("Error is on line %d\n", lineCounter);
   } else if (errorCounter > 1) {
     printf("\nYou have %d errors! Fix them!\n", errorCounter);
+    for (int i = 0; i < 512; i++) {
+        if (errorLines[i] == 0) {
+            continue;
+        }
+        printf("Error is on line %d\n", errorLines[i]);
+    }
   } else {
     printf("\nParsing successful\n");
   }
