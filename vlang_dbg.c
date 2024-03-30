@@ -8,6 +8,8 @@
 
 #include <string.h>
 
+int errorCounter = 0;
+
 void parseVLang(const char *line) {
   regex_t regex;
   int reti;
@@ -194,7 +196,7 @@ void parseVLang(const char *line) {
     }
     return;
   }
-  
+
   // Match else statement
   reti = regcomp(&regex, pattern_else, REG_EXTENDED);
   if (reti) {
@@ -218,6 +220,7 @@ void parseVLang(const char *line) {
     }
     if (hasAlphanumeric >= 1) {
       printf("No code found on line\n%s\n", line);
+      errorCounter++; // Add an error to the error counter
     }
   }
   regfree(&regex);
@@ -247,8 +250,13 @@ int main(int argc, char *argv[]) {
 
   // Close the input file
   fclose(oldFile);
-
-  printf("\nParsing successful\n");
+  if (errorCounter == 1) {
+    printf("\nYour code has an error! Fix it!\n");
+  } else if (errorCounter > 1) {
+    printf("\nYou have %d errors! Fix them!\n", errorCounter);
+  } else {
+    printf("\nParsing successful\n");
+  }
 
   return 0;
 }
