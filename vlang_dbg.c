@@ -25,11 +25,11 @@ void parseVLang(const char *line) {
       "print (.+)"; // validated, works, group1 is item to be printed
 
   char *pattern_variable_assigned =
-      "(int|string|bool) ([a-zA-Z]+)(\\s= )(.+)"; // validated, works, group1 is
+      "(int|string|bool) ([a-zA-Z0-9]+)(\\s= )(.+)"; // validated, works, group1 is
                                                   // type, group 2 is name,
                                                   // group 4 is value
 
-  char *pattern_variable_unassigned = "(int|string|bool) ([a-zA-Z]+)";
+  char *pattern_variable_unassigned = "(int|string|bool) ([a-zA-Z0-9]+)";
   // function regex
   char *pattern_function = "\\bfunction ([a-zA-Z]+) (int|string|bool) "
                            "([a-zA-Z]+):"; // Updated with \b word boundary ,
