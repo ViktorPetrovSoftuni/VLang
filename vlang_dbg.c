@@ -25,11 +25,7 @@ void parseVLang(const char *line) {
                                                   // group 4 is value
 
   // function regex
-  char *pattern_function = "\\bfunction ([a-zA-Z]+) (int|string|bool) "
-                           "([a-zA-Z]+):"; // Updated with \b word boundary
-                                           // anchor, group1 is function name,
-                                           // group2 is input data type, group3
-                                           // is name of input
+  char *pattern_function = "\\bfunction ([a-zA-Z]+) (int|string|bool) ([a-zA-Z]+):"; // Updated with \b word boundary , group1 is function name, group2 is input data type, group3 is name of input
 
   // function end regex
   char *pattern_end_function =
@@ -37,19 +33,17 @@ void parseVLang(const char *line) {
                        // function name to end
 
   // if statement regex
-  char *pattern_if = "\\s*if\\s+([^:]+):\\s*"; // validated, works, group1 is if
-                                               // check statement
+  char *pattern_if = "\\s*if\\s+([^:]+):\\s*"; // validated, works, group1 is if check statement
 
   // elseif statement regex
   char *pattern_else_if =
-      "\\s*elseif\\s+([^:]+):\\s*"; // validated, group 1 is elseif check
-                                    // statement
+      "\\s*elseif\\s+([^:]+):\\s*"; // validated, group 1 is elseif check statement
 
   // else statement regex
   char *pattern_else = "(else):"; // validated
 
   // while statement regex
-  char *pattern_while = "while (.+):";
+  char *pattern_while = "while (.+):"; //validated, group1 is while statement
 
   // return statement regex
   char *pattern_return =
@@ -74,7 +68,7 @@ void parseVLang(const char *line) {
       char match[512]; // Assuming a maximum lenght of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
-      printf("Value to be printed: %s\n", match);
+      printf("\nValue to be printed: %s\n", match);
     }
     return;
   }
@@ -215,9 +209,18 @@ void parseVLang(const char *line) {
     fprintf(stderr, "Could not compile while loop regex\n");
     return;
   }
-  reti = regexec(&regex, line, 0, NULL, 0);
+  reti = regexec(&regex, line, 2, matches, 0);
   if (!reti) {
     printf("Match found for while loop:\n%s\n", line);
+    // Extract and print the matched value
+    size_t start = matches[1].rm_so;
+    size_t end = matches[1].rm_eo;
+    if (start != -1 && end != -1) {
+      char match[512]; // Assuming a maximum lenght of  511 characters
+      strncpy(match, line + start, end - start);
+      match[end - start] = '\0';
+      printf("While statement check: %s\n", match);
+    }
     return;
   }
 
