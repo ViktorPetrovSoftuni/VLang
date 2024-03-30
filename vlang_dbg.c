@@ -58,7 +58,9 @@ void parseVLang(const char *line) {
   // return statement regex
   char *pattern_return =
       "return (.+)"; // validated, works, group1 is return value
-
+  // read statement regex
+  char *pattern_read = "read (.+)"; //validated, works, group1 is the information to be read
+  
   // Compile regex pattern
   regmatch_t matches[5]; // Array to store matches
   reti = regcomp(&regex, pattern_print, REG_EXTENDED);
