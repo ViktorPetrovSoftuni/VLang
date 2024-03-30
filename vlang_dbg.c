@@ -20,7 +20,7 @@ void parseVLang(const char *line) {
     char *pattern_end_function = "end ([a-zA-Z]+)"; //validated, works, group1 is function name to end
 
     //if statement regex
-    char *pattern_if = "(?<![a-zA-Z])if (.+):"; //validated, works, group1 is if check statement
+    char *pattern_if = "\\s*if\\s+([^:]+):\\s*"; // validated, works, group1 is if check statement
 
 }
 
