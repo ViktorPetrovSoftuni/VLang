@@ -10,7 +10,8 @@
 
 int errorCounter = 0;
 int lineCounter = 0;
-int errorLines[512] = {0}; // Initialise error lines array and fill it with zeroes
+int errorLines[512] = {
+    0}; // Initialise error lines array and fill it with zeroes
 
 void parseVLang(const char *line) {
   regex_t regex;
@@ -28,6 +29,7 @@ void parseVLang(const char *line) {
                                                   // type, group 2 is name,
                                                   // group 4 is value
 
+  
   // function regex
   char *pattern_function = "\\bfunction ([a-zA-Z]+) (int|string|bool) "
                            "([a-zA-Z]+):"; // Updated with \b word boundary ,
@@ -59,8 +61,9 @@ void parseVLang(const char *line) {
   char *pattern_return =
       "return (.+)"; // validated, works, group1 is return value
   // read statement regex
-  char *pattern_read = "read (.+)"; //validated, works, group1 is the information to be read
-  
+  char *pattern_read =
+      "read (.+)"; // validated, works, group1 is the information to be read
+
   // Compile regex pattern
   regmatch_t matches[5]; // Array to store matches
   reti = regcomp(&regex, pattern_print, REG_EXTENDED);
@@ -235,7 +238,7 @@ void parseVLang(const char *line) {
     }
     return;
   }
-  
+
   // Match return statement
   reti = regcomp(&regex, pattern_return, REG_EXTENDED);
   if (reti) {
@@ -256,6 +259,26 @@ void parseVLang(const char *line) {
     }
     return;
   }
+  // Match read statement
+  reti = regcomp(&regex, pattern_read, REG_EXTENDED);
+  if (reti) {
+    fprintf(stderr, "Could not compile read statement regex\n");
+    return;
+  }
+  reti = regexec(&regex, line, 2, matches, 0);
+  if (!reti) {
+    printf("Match found for read statement:\n%s\n", line);
+    // Extract and print the matched value
+    size_t start = matches[1].rm_so;
+    size_t end = matches[1].rm_eo;
+    if (start != -1 && end != -1) {
+      char match[512]; // Assuming a maximum lenght of  511 characters
+      strncpy(match, line + start, end - start);
+      match[end - start] = '\0';
+      printf("Read statement value to be inputted: %s\n", match);
+    }
+    return;
+  }
 
   // Check for code that was not detected by the regex parser
   if (strcmp(line, "") != 0) {
@@ -269,7 +292,7 @@ void parseVLang(const char *line) {
     if (hasAlphanumeric >= 1) {
       printf("No code found on line\n%s\n", line);
       errorCounter++; // Add an error to the error counter
-      errorLines[lineCounter-1] = lineCounter;
+      errorLines[lineCounter - 1] = lineCounter;
     }
   }
   regfree(&regex);
@@ -305,10 +328,10 @@ int main(int argc, char *argv[]) {
   } else if (errorCounter > 1) {
     printf("\nYou have %d errors! Fix them!\n", errorCounter);
     for (int i = 0; i < 512; i++) {
-        if (errorLines[i] == 0) {
-            continue;
-        }
-        printf("Error is on line %d\n", errorLines[i]);
+      if (errorLines[i] == 0) {
+        continue;
+      }
+      printf("Error is on line %d\n", errorLines[i]);
     }
   } else {
     printf("\nParsing successful\n");
