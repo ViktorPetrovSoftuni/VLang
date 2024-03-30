@@ -126,7 +126,7 @@ void parseVLang(const char *line) {
         fprintf(stderr, "Could not compile end function regex\n");
         return;
     }
-    reti = regexec(&regex, line, 1, matches, 0);
+    reti = regexec(&regex, line, 2, matches, 0);
     if (!reti) {
         printf("Match found for function end:\n%s\n", line);
         // Extract and print the matched value
