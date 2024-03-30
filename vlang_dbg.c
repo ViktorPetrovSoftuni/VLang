@@ -160,6 +160,18 @@ void parseVLang(const char *line) {
     }
     return;
   }
+  
+  // Match elseif statement
+  reti = regcomp(&regex, pattern_else_if, REG_EXTENDED);
+  if (reti) {
+    fprintf(stderr, "Could not compile else-if statement regex\n");
+    return;
+  }
+  reti = regexec(&regex, line, 0, NULL, 0);
+  if (!reti) {
+    printf("Match found for else-if statement:\n%s\n", line);
+    return;
+  }
 
   // Check for code that was not detected by the regex parser
   if (strcmp(line, "") != 0) {
