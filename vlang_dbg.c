@@ -209,6 +209,18 @@ void parseVLang(const char *line) {
     return;
   }
 
+  // Match while statement
+  reti = regcomp(&regex, pattern_while, REG_EXTENDED);
+  if (reti) {
+    fprintf(stderr, "Could not compile while loop regex\n");
+    return;
+  }
+  reti = regexec(&regex, line, 0, NULL, 0);
+  if (!reti) {
+    printf("Match found for while loop:\n%s\n", line);
+    return;
+  }
+
   // Check for code that was not detected by the regex parser
   if (strcmp(line, "") != 0) {
     int hasAlphanumeric = 0; // Assume initially no alphanumeric characters
