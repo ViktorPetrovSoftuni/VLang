@@ -87,11 +87,39 @@ void parseVLang(const char *line) {
         fprintf(stderr, "Could not compile function regex\n");
         return;
     }
-    reti = regexec(&regex, line, 3, matches, 0);
+    reti = regexec(&regex, line, 4, matches, 0); // Increased to 4 to capture the entire match and three groups
     if (!reti) {
         printf("Match found for function declaration:\n%s\n", line);
+        // Extract and print the function name
+        size_t start = matches[1].rm_so;
+        size_t end = matches[1].rm_eo;
+        if (start != -1 && end != -1) {
+            char match[256]; // Assuming a maximum length of 255 characters
+            strncpy(match, line + start, end - start);
+            match[end - start] = '\0';
+            printf("Function name: %s\n", match);
+        }
+        // Extract and print the function input data type
+        start = matches[2].rm_so; // Removed duplicate declaration of start
+        end = matches[2].rm_eo; // Removed duplicate declaration of end
+        if (start != -1 && end != -1) {
+            char match[256]; // Assuming a maximum length of 255 characters
+            strncpy(match, line + start, end - start);
+            match[end - start] = '\0';
+            printf("Function input data type: %s\n", match);
+        }
+        // Extract and print the function input variable name
+        start = matches[3].rm_so; // Use group 3 for the variable name
+        end = matches[3].rm_eo;
+        if (start != -1 && end != -1) {
+            char match[256]; // Assuming a maximum length of 255 characters
+            strncpy(match, line + start, end - start);
+            match[end - start] = '\0';
+            printf("Function input variable name: %s\n", match);
+        }
         return;
     }
+    
 }
 
 int main(int argc, char *argv[]) {
