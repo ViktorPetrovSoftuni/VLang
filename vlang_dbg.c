@@ -25,12 +25,18 @@ int main(int argc, char *argv[]) {
         fprintf(stderr, "Usage: %s inputFile\n", argv[0]);
         return 1;
     }
-    
+
     // Open oldFile in read mode
     oldFile = fopen(argv[1], "r");
     if (oldFile == NULL) {
         fprintf(stderr, "Error opening %s for reading\n", argv[1]);
         return 1;
+    }
+
+    char line[1000];
+    // Read each line from the input file and call parseVLang function
+    while (fgets(line, sizeof(line), oldFile)) {
+        parseVLang(line);
     }
 
     return 0;
