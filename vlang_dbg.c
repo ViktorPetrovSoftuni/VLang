@@ -31,6 +31,9 @@ void parseVLang(const char *line) {
     //while statement regex
     char *pattern_while = "while (.+):";
 
+    //return statement regex
+    char *pattern_return = "return (.+)"; // validated, works, group1 is return value
+
 }
 
 int main(int argc, char *argv[]) {
