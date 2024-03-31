@@ -370,6 +370,7 @@ int main(int argc, char *argv[]) {
   } else {
     printf("\nParsing successful\n");
     printf("\nProceeding to compiling into IL\n");
+    fprintf(newFile, "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n"); // Initial IL file setup
     char line[1000];
     // Read each line from the input file and call validateVlang function
     while (fgets(line, sizeof(line), oldFile)) {
