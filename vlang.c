@@ -1,4 +1,13 @@
+#include <ctype.h>
+
+#include <regex.h>
+
 #include <stdio.h>
+
+#include <stdlib.h>
+
+#include <string.h>
+
 
 void parseVLang(const char *line) {
   regex_t regex;
