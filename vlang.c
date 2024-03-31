@@ -8,6 +8,10 @@
 
 #include <string.h>
 
+int errorCounter = 0;
+int lineCounter = 0;
+int errorLines[512] = {
+    0}; // Initialise error lines array and fill it with zeroes
 
 void parseVLang(const char *line) {
   regex_t regex;
