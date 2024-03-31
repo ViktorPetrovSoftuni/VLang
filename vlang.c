@@ -65,14 +65,12 @@ void validateVlang(const char *line) {
   regmatch_t matches[5]; // Array to store matches
   reti = regcomp(&regex, pattern_print, REG_EXTENDED);
   if (reti) {
-    fprintf(stderr, "Could not compile print statement regex\n");
     regfree(&regex);
     return;
   }
 
   reti = regexec(&regex, line, 2, matches, 0);
   if (!reti) {
-    printf("Match found for print statement:\n%s", line);
     // Extract and print the matched value
     size_t start = matches[1].rm_so;
     size_t end = matches[1].rm_eo;
@@ -88,13 +86,11 @@ void validateVlang(const char *line) {
   // Match variable assignments
   reti = regcomp(&regex, pattern_variable_assigned, REG_EXTENDED);
   if (reti) {
-    fprintf(stderr, "Could not compile variable assignment regex\n");
     return;
   }
 
   reti = regexec(&regex, line, 5, matches, 0);
   if (!reti) {
-    printf("Match found for variable assignment:\n%s", line);
     // Extract and print the matched value
     size_t start = matches[4].rm_so;
     size_t end = matches[4].rm_eo;
@@ -102,7 +98,7 @@ void validateVlang(const char *line) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
-      printf("Variable value: %s\n", match);
+      //printf("Variable value: %s\n", match);
     }
 
     return;
@@ -399,15 +395,44 @@ void parseVLang(const char *line, FILE *newFile) {
 
   reti = regexec(&regex, line, 5, matches, 0);
   if (!reti) {
-    printf("Match found for variable assignment:\n%s", line);
-    // Extract and print the matched value
-    size_t start = matches[4].rm_so;
-    size_t end = matches[4].rm_eo;
+    //printf("Match found for variable assignment:\n%s", line);
+    // Extract variable type, int, bool or char[]
+    size_t start = matches[1].rm_so;
+    size_t end = matches[1].rm_eo;
     if (start != -1 && end != -1) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
-      printf("Variable value: %s\n", match);
+      // Compare the match variable with predefined types
+      if (strcmp(match, "int") == 0) {
+          fprintf(newFile, "int ");
+      } else if (strcmp(match, "bool") == 0) {
+          fprintf(newFile, "bool ");
+      } else if (strcmp(match, "string") == 0) { // Corrected to "else if"
+          fprintf(newFile, "char[] ");
+      }
+    }
+
+    // Extract variable name
+    start = matches[2].rm_so;
+    end = matches[2].rm_eo;
+    if (start != -1 && end != -1) {
+      char match[512]; // Assuming a maximum length of  511 characters
+      strncpy(match, line + start, end - start);
+      match[end - start] = '\0';
+      fprintf(newFile, "%s", match);
+      fprintf(newFile, " = ");
+    }
+
+    // Extract variable value
+    start = matches[4].rm_so;
+    end = matches[4].rm_eo;
+    if (start != -1 && end != -1) {
+      char match[512]; // Assuming a maximum length of  511 characters
+      strncpy(match, line + start, end - start);
+      match[end - start] = '\0';
+      fprintf(newFile, "%s", match);
+      fprintf(newFile, ";");
     }
 
     return;
@@ -423,7 +448,7 @@ void parseVLang(const char *line, FILE *newFile) {
       regexec(&regex, line, 4, matches,
               0); // Increased to 4 to capture the entire match and three groups
   if (!reti) {
-    printf("Match found for function declaration:\n%s\n", line);
+    //printf("Match found for function declaration:\n%s\n", line);
     // Extract and print the function name
     size_t start = matches[1].rm_so;
     size_t end = matches[1].rm_eo;
@@ -653,16 +678,20 @@ int main(int argc, char *argv[]) {
     }
   } else {
     printf("\nParsing successful\n");
+  }
+
+  // Reset file pointer to the beginning of the file
+  fseek(oldFile, 0, SEEK_SET);
+
+  if (errorCounter == 0 ){
     printf("\nProceeding to compiling into IL\n");
-    fprintf(newFile, "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\n int main() {\n"); // Initial IL file setup
-    char line[1000];
+    fprintf(newFile, "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nint main() {\n\n"); // Initial IL file setup
     // Read each line from the input file and call validateVlang function
     while (fgets(line, sizeof(line), oldFile)) {
         parseVLang(line, newFile); // Parse VLang to IL
     }
-    fprintf(newFile, "}");
+    fprintf(newFile, "\n\n}\n");
   }
-
   // Close files
   fclose(oldFile);
   fclose(newFile);

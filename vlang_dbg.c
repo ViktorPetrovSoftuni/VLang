@@ -98,11 +98,31 @@ void parseVLang(const char *line) {
   reti = regexec(&regex, line, 5, matches, 0);
   if (!reti) {
     printf("Match found for variable assignment:\n%s", line);
-    // Extract and print the matched value
-    size_t start = matches[4].rm_so;
-    size_t end = matches[4].rm_eo;
+    // Extract variable type, int, bool or char[]
+    size_t start = matches[1].rm_so;
+    size_t end = matches[1].rm_eo;
     if (start != -1 && end != -1) {
-      char match[512]; // Assuming a maximum lenght of  511 characters
+      char match[512]; // Assuming a maximum length of  511 characters
+      strncpy(match, line + start, end - start);
+      match[end - start] = '\0';
+      printf("Variable type: %s\n", match);
+    }
+
+    // Extract variable name
+    start = matches[2].rm_so;
+    end = matches[2].rm_eo;
+    if (start != -1 && end != -1) {
+      char match[512]; // Assuming a maximum length of  511 characters
+      strncpy(match, line + start, end - start);
+      match[end - start] = '\0';
+      printf("Variable name: %s\n", match);
+    }
+
+    // Extract variable value
+    start = matches[4].rm_so;
+    end = matches[4].rm_eo;
+    if (start != -1 && end != -1) {
+      char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
       printf("Variable value: %s\n", match);
