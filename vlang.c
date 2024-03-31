@@ -50,4 +50,21 @@ void parseVLang(const char *line) {
       "read (.+)"; // validated, works, group1 is the information to be read
 }
 
-int main(int argc, char *argv[]) { return 0; }
+int main(int argc, char *argv[]) { 
+    FILE *oldFile, *newFile;
+
+    // Check if correct number of command line arguments are provided
+    if (argc != 3) {
+        fprintf(stderr, "Usage: %s oldFile newFile\n", argv[0]);
+        return 1;
+    }
+
+    // Open oldFile in read mode and newFile in write mode
+    oldFile = fopen(argv[1], "r");
+    if (oldFile == NULL) {
+        fprintf(stderr, "Error opening %s for reading\n", argv[1]);
+        return 1;
+    }
+
+    return 0; 
+    }
