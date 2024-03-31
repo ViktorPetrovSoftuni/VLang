@@ -13,7 +13,7 @@ int lineCounter = 0;
 int errorLines[512] = {
     0};  // Initialise error lines array and fill it with zeroes
 
-void parseVLang(const char *line) {
+void validateVlang(const char *line) {
   regex_t regex;
   int reti;
   
@@ -318,6 +318,10 @@ void parseVLang(const char *line) {
 
 }
 
+void parseVLang(const char *line, FILE *newFile) {
+    
+}
+
 int main(int argc, char *argv[]) {
   FILE *oldFile, *newFile;
 
@@ -346,9 +350,9 @@ int main(int argc, char *argv[]) {
   }
 
   char line[1000];
-  // Read each line from the input file and call parseVLang function
+  // Read each line from the input file and call validateVlang function
   while (fgets(line, sizeof(line), oldFile)) {
-    parseVLang(line);
+    validateVlang(line);
   }
 
 
@@ -365,6 +369,12 @@ int main(int argc, char *argv[]) {
     }
   } else {
     printf("\nParsing successful\n");
+    printf("\nProceeding to compiling into IL\n");
+    char line[1000];
+    // Read each line from the input file and call validateVlang function
+    while (fgets(line, sizeof(line), oldFile)) {
+        parseVLang(line, newFile); // Parse VLang to IL
+    }
   }
 
   // Close files
