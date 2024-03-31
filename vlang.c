@@ -78,7 +78,6 @@ void validateVlang(const char *line) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
-      printf("\nValue to be printed: %s\n", match);
     }
     return;
   }
@@ -373,7 +372,6 @@ void parseVLang(const char *line, FILE *newFile) {
 
   reti = regexec(&regex, line, 2, matches, 0);
   if (!reti) {
-    printf("Match found for print statement:\n%s", line);
     // Extract and print the matched value
     size_t start = matches[1].rm_so;
     size_t end = matches[1].rm_eo;
@@ -381,7 +379,6 @@ void parseVLang(const char *line, FILE *newFile) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
-      printf("\nValue to be printed: %s\n", match);
     }
     return;
   }
@@ -409,7 +406,7 @@ void parseVLang(const char *line, FILE *newFile) {
       } else if (strcmp(match, "bool") == 0) {
           fprintf(newFile, "bool ");
       } else if (strcmp(match, "string") == 0) { // Corrected to "else if"
-          fprintf(newFile, "char[] ");
+          fprintf(newFile, "char ");
       }
     }
 
@@ -420,7 +417,7 @@ void parseVLang(const char *line, FILE *newFile) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
-      fprintf(newFile, "%s", match);
+      fprintf(newFile, "%s[]", match);
       fprintf(newFile, " = ");
     }
 
