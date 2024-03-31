@@ -16,7 +16,7 @@ int errorLines[512] = {
 void parseVLang(const char *line) {
   regex_t regex;
   int reti;
-
+  
   // Define regex patterns
   // variable assignment regex
   char *pattern_print =
@@ -351,11 +351,7 @@ int main(int argc, char *argv[]) {
     parseVLang(line);
   }
 
-  // Close files
-  fclose(newFile);
 
-  // Close the input file
-  fclose(oldFile);
   if (errorCounter == 1) {
     printf("\nYour code has an error! Fix it!\n");
     printf("Error is on line %d\n", errorLines[0]);
@@ -370,6 +366,10 @@ int main(int argc, char *argv[]) {
   } else {
     printf("\nParsing successful\n");
   }
+
+  // Close files
+  fclose(oldFile);
+  fclose(newFile);
 
   return 0;
 }
