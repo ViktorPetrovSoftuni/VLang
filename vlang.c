@@ -394,8 +394,7 @@ void parseVLang(const char *line, FILE *newFile) {
           } else if (strcmp(variables[i].variableType, "int") == 0) {
             fprintf(newFile, "printf(\"%%d\", %s);\n", match);
           } else if (strcmp(variables[i].variableType, "bool") == 0) {
-            // TODO: Handle boolean type
-            // fprintf(newFile, "//TODO: Handle boolean type\n");
+            fprintf(newFile, "printf(\"%%d\", %s);\n", match);            
           }
         }
       }
@@ -412,7 +411,6 @@ void parseVLang(const char *line, FILE *newFile) {
 
   reti = regexec(&regex, line, 5, matches, 0);
   if (!reti) {
-    // printf("Match found for variable assignment:\n%s", line);
     //  Extract variable type, int, bool or char[]
     size_t start = matches[1].rm_so;
     size_t end = matches[1].rm_eo;
