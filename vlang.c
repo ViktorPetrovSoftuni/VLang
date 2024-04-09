@@ -446,7 +446,9 @@ void parseVLang(const char *line, FILE *newFile) {
     if (start != -1 && end != -1) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
+      match[strlen(match) - 1] = '\0';
       fprintf(newFile, "%s;", match);
+      fprintf(newFile, "\n");
     }
 
     return;
