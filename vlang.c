@@ -11,12 +11,20 @@
 int errorCounter = 0;
 int lineCounter = 0;
 int errorLines[512] = {
-    0};  // Initialise error lines array and fill it with zeroes
+    0}; // Initialise error lines array and fill it with zeroes
+int variablesStructCounter = 0;
+// Create struct to keep used variable names and types
+struct nameTypePairs {
+  char variableType[50];
+  char variableName[50];
+};
+
+struct nameTypePairs variables[100];
 
 void validateVlang(const char *line) {
   regex_t regex;
   int reti;
-  
+
   // Define regex patterns
   // variable assignment regex
   char *pattern_print =
@@ -97,7 +105,7 @@ void validateVlang(const char *line) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
-      //printf("Variable value: %s\n", match);
+      // printf("Variable value: %s\n", match);
     }
 
     return;
@@ -310,13 +318,13 @@ void validateVlang(const char *line) {
     }
   }
   regfree(&regex);
-
 }
 
 void parseVLang(const char *line, FILE *newFile) {
   regex_t regex;
   int reti;
-  
+
+  // Create an array of used variable names and pairs
   // Define regex patterns
   // variable assignment regex
   char *pattern_print =
@@ -379,6 +387,18 @@ void parseVLang(const char *line, FILE *newFile) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
+      for (int i = 0; i < variablesStructCounter; i++) {
+        if (strcmp(match, variables[i].variableName) == 0) {
+          if (strcmp(variables[i].variableType, "string") == 0) {
+            fprintf(newFile, "printf(\"%%s\", %s);\n", match);
+          } else if (strcmp(variables[i].variableType, "int") == 0) {
+            fprintf(newFile, "printf(\"%%d\", %s);\n", match);
+          } else if (strcmp(variables[i].variableType, "bool") == 0) {
+            // TODO: Handle boolean type
+            // fprintf(newFile, "//TODO: Handle boolean type\n");
+          }
+        }
+      }
     }
     return;
   }
@@ -392,8 +412,8 @@ void parseVLang(const char *line, FILE *newFile) {
 
   reti = regexec(&regex, line, 5, matches, 0);
   if (!reti) {
-    //printf("Match found for variable assignment:\n%s", line);
-    // Extract variable type, int, bool or char[]
+    // printf("Match found for variable assignment:\n%s", line);
+    //  Extract variable type, int, bool or char[]
     size_t start = matches[1].rm_so;
     size_t end = matches[1].rm_eo;
     if (start != -1 && end != -1) {
@@ -401,12 +421,9 @@ void parseVLang(const char *line, FILE *newFile) {
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
       // Compare the match variable with predefined types
-      if (strcmp(match, "int") == 0) {
-          fprintf(newFile, "int ");
-      } else if (strcmp(match, "bool") == 0) {
-          fprintf(newFile, "bool ");
-      } else if (strcmp(match, "string") == 0) { // Corrected to "else if"
-          fprintf(newFile, "char ");
+      if (strcmp(match, "int") == 0 || strcmp(match, "bool") == 0 ||
+          strcmp(match, "string") == 0) {
+        strcpy(variables[variablesStructCounter].variableType, match);
       }
     }
 
@@ -417,9 +434,13 @@ void parseVLang(const char *line, FILE *newFile) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
-      fprintf(newFile, "%s[]", match);
+      fprintf(newFile, "char %s[]", match);
       fprintf(newFile, " = ");
+      strcpy(variables[variablesStructCounter].variableName, match);
     }
+
+    // Increment struct iterator
+    variablesStructCounter++;
 
     // Extract variable value
     start = matches[4].rm_so;
@@ -427,9 +448,7 @@ void parseVLang(const char *line, FILE *newFile) {
     if (start != -1 && end != -1) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
-      match[end - start] = '\0';
-      fprintf(newFile, "%s", match);
-      fprintf(newFile, ";");
+      fprintf(newFile, "%s;", match);
     }
 
     return;
@@ -445,8 +464,8 @@ void parseVLang(const char *line, FILE *newFile) {
       regexec(&regex, line, 4, matches,
               0); // Increased to 4 to capture the entire match and three groups
   if (!reti) {
-    //printf("Match found for function declaration:\n%s\n", line);
-    // Extract and print the function name
+    // printf("Match found for function declaration:\n%s\n", line);
+    //  Extract and print the function name
     size_t start = matches[1].rm_so;
     size_t end = matches[1].rm_eo;
     if (start != -1 && end != -1) {
@@ -661,7 +680,6 @@ int main(int argc, char *argv[]) {
     validateVlang(line);
   }
 
-
   if (errorCounter == 1) {
     printf("\nYour code has an error! Fix it!\n");
     printf("Error is on line %d\n", errorLines[0]);
@@ -680,12 +698,13 @@ int main(int argc, char *argv[]) {
   // Reset file pointer to the beginning of the file
   fseek(oldFile, 0, SEEK_SET);
 
-  if (errorCounter == 0 ){
+  if (errorCounter == 0) {
     printf("\nProceeding to compiling into IL\n");
-    fprintf(newFile, "#include <stdio.h>\n#include <stdlib.h>\n#include <string.h>\n\nint main() {\n\n"); // Initial IL file setup
+    fprintf(newFile, "#include <stdio.h>\n#include <stdlib.h>\n#include "
+                     "<string.h>\n\nint main() {\n\n"); // Initial IL file setup
     // Read each line from the input file and call validateVlang function
     while (fgets(line, sizeof(line), oldFile)) {
-        parseVLang(line, newFile); // Parse VLang to IL
+      parseVLang(line, newFile); // Parse VLang to IL
     }
     fprintf(newFile, "\n\n}\n");
   }
