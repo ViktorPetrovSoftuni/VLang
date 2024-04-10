@@ -8,6 +8,7 @@
 
 #include <string.h>
 
+
 int errorCounter = 0;
 int lineCounter = 0;
 int errorLines[512] = {
