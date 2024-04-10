@@ -4,5 +4,6 @@
 vlang_dbg
 vlang
 *.vlang
+*.c
 !vlang.c
 !vlang_dbg.c
