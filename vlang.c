@@ -423,6 +423,7 @@ void parseVLang(const char *line, FILE *newFile) {
       if (strcmp(match, "int") == 0 || strcmp(match, "bool") == 0 ||
           strcmp(match, "string") == 0) {
         strcpy(variables[variablesStructCounter].variableType, match);
+        fprintf(newFile, "%s ", match);
       }
     }
 
@@ -433,9 +434,13 @@ void parseVLang(const char *line, FILE *newFile) {
       char match[512]; // Assuming a maximum length of  511 characters
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
+      strcpy(variables[variablesStructCounter].variableName, match);
+      /*
       fprintf(newFile, "char %s[]", match);
       fprintf(newFile, " = ");
-      strcpy(variables[variablesStructCounter].variableName, match);
+      */
+
+      fprintf(newFile, "%s = ", variables[variablesStructCounter].variableName);
     }
 
     // Increment struct iterator
