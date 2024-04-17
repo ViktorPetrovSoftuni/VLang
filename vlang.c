@@ -435,10 +435,6 @@ void parseVLang(const char *line, FILE *newFile) {
       strncpy(match, line + start, end - start);
       match[end - start] = '\0';
       strcpy(variables[variablesStructCounter].variableName, match);
-      /*
-      fprintf(newFile, "char %s[]", match);
-      fprintf(newFile, " = ");
-      */
 
       fprintf(newFile, "%s = ", variables[variablesStructCounter].variableName);
     }
