@@ -650,6 +650,9 @@ void parseVLang(const char *line, FILE *newFile) {
 }
 
 int main(int argc, char *argv[]) {
+  char program_name[256];  // Array to hold the file name input
+  char command[512];       // Array to hold the gcc command
+
   FILE *oldFile, *newFile;
 
   // Check if correct number of command line arguments are provided
@@ -708,8 +711,28 @@ int main(int argc, char *argv[]) {
     while (fgets(line, sizeof(line), oldFile)) {
       parseVLang(line, newFile); // Parse VLang to IL
     }
+    
     fprintf(newFile, "\n\n}\n");
   }
+
+        sprintf(command, "gcc %s -o %s", newFileName, argv[2]);
+        // Compile the program
+        int result = system(command);
+        if (result == -1) {
+            printf("Failed to execute gcc command\n");
+            fclose(oldFile);
+            fclose(newFile);
+            return 1;
+        } else if (result != 0) {
+            printf("Compilation failed\n");
+            fclose(oldFile);
+            fclose(newFile);
+            return 1;
+        } else {
+            printf("Compilation successful\n");
+        }
+    
+   
   // Close files
   fclose(oldFile);
   fclose(newFile);
